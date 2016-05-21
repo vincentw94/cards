@@ -1,12 +1,12 @@
 package games;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import cards.Card;
 
 public class Player<T extends Card> {	
-	private LinkedList<T> hand, selected, faceUp, faceDown;		// not all of these may be used in each game
+	private ArrayList<T> hand;
 	private boolean hasTurn, isActive;
 	private int id, points;		// points may or may not be needed
 	
@@ -14,10 +14,7 @@ public class Player<T extends Card> {
 		this.id = id;
 		isActive = true;
 		
-		hand = new LinkedList<T>();
-		selected = new LinkedList<T>();
-		faceUp = new LinkedList<T>();
-		faceDown = new LinkedList<T>();
+		hand = new ArrayList<T>();
 	}
 	
 	// player id
@@ -37,27 +34,6 @@ public class Player<T extends Card> {
 	public void putAllInHand(List<T> cards) {
 		for (T card : cards)
 			putInHand(card);
-	}
-	
-	// dealing or actions by player
-	public void putFaceDown(T card) {
-		faceDown.add(card);
-	}
-	public void putFaceUp(T card) {
-		faceUp.add(card);
-	}
-	
-	// card(s) player is about to play
-	public LinkedList<T> getSelected() {
-		return selected;
-	}
-	
-	// state of game
-	public LinkedList<T> getFaceUp() {
-		return faceUp;
-	}
-	public LinkedList<T> getFaceDown() {
-		return faceDown;
 	}
 	
 	// TODO: link to client
