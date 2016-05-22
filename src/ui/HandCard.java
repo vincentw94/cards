@@ -5,16 +5,26 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
+import network.GameClient;
 import cards.Card;
 
 @SuppressWarnings("serial")
 public class HandCard<T extends Card> extends CardDrawable {
-	private T card;
-	private boolean hover, selected;
+	protected T card;
+	private boolean selected;
 
-	public HandCard(T card) {
+	public HandCard(T card, int ind, int numCards) {
 		this.card = card;
 		setOpaque(true);
+
+		updateIndex(ind, numCards);
+	}
+
+	public void updateIndex(int ind, int numCards) {
+		int totalWidth = (numCards - 1) * Hand.HORIZ_OFFSET + T.IMG_WIDTH, startX = GameClient.WIDTH/2 - totalWidth/2;
+		int currY = selected ? 0 : Hand.VERT_OFFSET;
+		int newX = startX + ind * Hand.HORIZ_OFFSET;
+		setBounds(newX, currY, T.IMG_WIDTH, T.IMG_HEIGHT);
 	}
 
 	@Override
@@ -24,36 +34,21 @@ public class HandCard<T extends Card> extends CardDrawable {
 		if (hover) {
 			((Graphics2D)g).setStroke(BORDER_STROKE);
 			g.setColor(TRANS_BLUE);
-			g.fillRect(0, 0, Card.IMG_WIDTH, Card.IMG_HEIGHT);
+			g.fillRect(0, 0, T.IMG_WIDTH, T.IMG_HEIGHT);
 		}
 //		if (selected) {
 //			((Graphics2D)g).setStroke(BORDER_STROKE);
 //			g.setColor(TRANS_RED);
-//			g.fillRect(0, 0, Card.IMG_WIDTH, Card.IMG_HEIGHT);
+//			g.fillRect(0, 0, T.IMG_WIDTH, T.IMG_HEIGHT);
 //		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-//		System.out.println("pressed " + card);
 		selected = !selected;
 		Rectangle bounds = getBounds();
-		setBounds(bounds.x, Hand.VERT_OFFSET - bounds.y, bounds.width, bounds.height);
+		setBounds(bounds.x, selected ? 0 : Hand.VERT_OFFSET, bounds.width, bounds.height);
 
-		repaint();
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-//		System.out.println("entered " + card);
-		hover = true;
-		repaint();
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-//		System.out.println("exited " + card);
-		hover = false;
 		repaint();
 	}
 
