@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class GameServer {
 	private ServerSocket serverSocket;
@@ -15,12 +16,17 @@ public class GameServer {
 
 	private static int clientId = 0;
 
+	private HashMap<Integer, WorkerThread> clients;
+
 	public GameServer() {
+		clients = new HashMap<Integer, WorkerThread>();
+
 		try {
 			serverSocket = new ServerSocket(PORT_FREE_ANY);
 		} catch (IOException ioe) {
 			System.err.println("Could not create server!");
 			ioe.printStackTrace();
+			System.exit(1);
 		}
 
 		int count = 0;
@@ -32,11 +38,12 @@ public class GameServer {
 
 				// send client id
 
-				new WorkerThread(clientId, in, out).start();
+
+				WorkerThread worker = new WorkerThread(clientId, in, out);
+				clients.put(clientId, worker);
 
 				clientId++;
-
-
+				worker.start();
 			} catch (IOException ioe) {
 				ioe.printStackTrace();
 			}
@@ -45,10 +52,8 @@ public class GameServer {
 	}
 
 	// only handle 1 message at a time
-	private synchronized void handleClientMsg(int clientId, String msg, BufferedWriter clientOut) {
-		try {
-			Transaction transaction = Transaction.deserialize(msg);
-		}
+	private synchronized void handleClientMsg(int clientId, String msg, BufferedWriter clientOut) throws Exception {
+		Transaction transaction = Transaction.deserialize(msg);
 	}
 
 	private class WorkerThread extends Thread {
@@ -65,8 +70,10 @@ public class GameServer {
 		@Override
 		public void run() {
 			try {
-				String msg = in.readLine();
-				handleClientMsg(clientId, msg, out);
+				while (true) {
+					String msg = in.readLine();
+					handleClientMsg(clientId, msg, out);
+				}
 			} catch (Exception e) {
 				System.err.println("Error when processing msg from client " + clientId);
 				e.printStackTrace();

@@ -4,6 +4,7 @@ import javax.swing.JFrame;
 
 import ui.CardTable;
 import ui.Hand;
+import ui.Pile;
 import cards.Deck;
 import cards.PokerCard;
 
@@ -22,6 +23,11 @@ public class GameClient {
 		for (int i=0; i<10; i++)
 			hand.addCard(deck.next());
 		table.add(hand);
+
+		Pile<PokerCard> pile = new Pile<PokerCard>(200, 200);
+		for (int i=0; i<5; i++)
+			pile.add(deck.next());
+		table.add(pile);
 
 		frame.setContentPane(table);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
