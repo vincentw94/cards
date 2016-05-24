@@ -44,12 +44,16 @@ public class HandCard<T extends Card> extends CardDrawable {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mouseClicked(MouseEvent e) {
 		selected = !selected;
 		Rectangle bounds = getBounds();
 		setBounds(bounds.x, selected ? 0 : Hand.VERT_OFFSET, bounds.width, bounds.height);
 
 		repaint();
+
+		if (e.getClickCount() == 2) {
+			// TODO: play card
+		}
 	}
 
 	//TODO: set preferred size, rotate, mark selected?
